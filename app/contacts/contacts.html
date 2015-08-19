@@ -83,7 +83,7 @@
       </thead>
       <tbody>
         <tr ng-repeat ="c in contacts">
-          <td><a href="#">{{c.name}}</a></td>
+          <td><a ng-href="#/contact/{{$id}}" ng-click="shareContact(c)">{{c.name}}</a></td>
           <td>{{c.company}}</td>
           <td>{{c.email}}</td>
           <td>

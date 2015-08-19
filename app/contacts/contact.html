@@ -1,0 +1,18 @@
+<!-- Show Contact -->
+  <div class="row">
+    <a class="button tiny" ng-href="#/contacts" ng-click="clearContact()">Back To Contacts</a>
+    <div class="panel">
+      <h3>{{contact.name}}</h3>
+      <ul>
+        <li><strong>Company</strong>: {{contact.company}}</li>
+        <li><strong>Email Address</strong>: {{contact.email}}</li>
+        <h5>Phone Numbers</h5>
+        <li><strong>Work</strong>: {{contact.phone[0].work}}</li>
+        <li><strong>Home</strong>: {{contact.phone[0].home}}</li>
+        <li><strong>Mobile</strong>: {{contact.phone[0].mobile}}</li>
+        <h5>Location Info</h5>
+        <li>{{contact.address[0].street_address}}</li>
+        <li>{{contact.address[0].city}}, {{contact.address[0].state}} {{contact.address[0].zipcode}}</li>
+      </ul>
+    </div>
+  </div>

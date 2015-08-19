@@ -8,14 +8,32 @@ angular.module('dapContacts.contacts', ['ngRoute', 'firebase'])
       .when('/contacts', {
         templateUrl: 'contacts/contacts.html',
         controller: 'ContactsCtrl'
-      });
+      })
+      .when('/contact/:contactId', {
+        templateUrl: 'contacts/contact.html',
+        controller: 'ContactCtrl'
+      })
   }
 ])
+  .service('shareContact', [
+
+    function () {
+      var share = this;
+
+      share.passContact = function (c) {
+        share.contact = c;
+      };
+      share.clearContact = function () {
+        share.contact = {};
+      };
+
+    }
+  ])
 
 //CONTROLLER
-.controller('ContactsCtrl', ['$scope', '$firebaseArray',
+.controller('ContactsCtrl', ['$scope', '$firebaseArray', 'shareContact',
 
-  function ($scope, $firebaseArray) {
+  function ($scope, $firebaseArray, shareContact) {
     var fbRef = new Firebase('https://dap-contacts.firebaseio.com/contacts');
 
     // Clear $scope Fields
@@ -36,7 +54,7 @@ angular.module('dapContacts.contacts', ['ngRoute', 'firebase'])
 
     //GET CONTACTS
     $scope.contacts = $firebaseArray(fbRef);
-    // console.log($scope.contacts);
+    console.log($scope.contacts);
 
     //SHOW & HIDE ADDFORM
     $scope.showAddForm = function () {
@@ -90,6 +108,19 @@ angular.module('dapContacts.contacts', ['ngRoute', 'firebase'])
           $scope.msg = 'Contact Added';
         });
 
+    };
+    $scope.shareContact = function (c) {
+      shareContact.passContact(c);
+    };
+  }
+])
+
+.controller('ContactCtrl', ['$scope', 'shareContact',
+  function ($scope, shareContact) {
+    $scope.contact = shareContact.contact;
+    console.log($scope.contact);
+  $scope.clearContact = function () {
+      shareContact.clearContact();
     };
   }
 ]);
