@@ -13,114 +13,149 @@ angular.module('dapContacts.contacts', ['ngRoute', 'firebase'])
         templateUrl: 'contacts/contact.html',
         controller: 'ContactCtrl'
       })
+      .when('/contact/edit/:contactId', {
+        templateUrl: 'contacts/contact_edit.html',
+        controller: 'ContactEditCtrl'
+      })
   }
 ])
-  .service('shareContact', [
+//Sets firebase URL
+.constant('firebaseURI', 'https://dap-contacts.firebaseio.com/contacts')
 
-    function () {
-      var share = this;
+//Sets up contacts service into Firebase
+.factory('contactsService', ['$firebaseArray', '$filter', 'firebaseURI',
+  function ($firebaseArray, $filter, firebaseURI) {
+    var ref = new Firebase(firebaseURI);
+    var contacts = $firebaseArray(ref);
+    this.contact = [];
 
-      share.passContact = function (c) {
-        share.contact = c;
-      };
-      share.clearContact = function () {
-        share.contact = {};
-      };
+    var getContacts = function () {
+      return contacts;
+    };
+    var setContact = function (id) {
+      var setContact;
 
-    }
-  ])
+      this.contact = contacts.$getRecord(id);
+      // setContact = $filter('filter')(contacts, {
+      //   $id: id
+      // });
+      // this.contact = setContact[0];
+      console.log(this.contact);
+    };
+
+    var addContact = function (contact) {
+      contacts.$add(contact)
+        .then(function (ref) {
+          var id = ref.key();
+          console.log('Added Ccontact with ID: ' + id);
+        });
+    };
+
+    var updateContact = function (contact) {
+      contacts.$save(contact)
+        .then(function (ref) {
+          var id = ref.key();
+          console.log('Updated Ccontact with ID: ' + id);
+        });
+    };
+
+    var removeContact = function (id) {
+      contacts.$remove(id);
+    };
+    return {
+      ref: ref,
+      contact: this.contact,
+      getContacts: getContacts,
+      setContact: setContact,
+      addContact: addContact,
+      updateContact: updateContact,
+      removeContact: removeContact
+    };
+  }
+])
 
 //CONTROLLER
-.controller('ContactsCtrl', ['$scope', '$firebaseArray', 'shareContact',
-
-  function ($scope, $firebaseArray, shareContact) {
-    var fbRef = new Firebase('https://dap-contacts.firebaseio.com/contacts');
-
-    // Clear $scope Fields
-    function clearFields() {
-      console.log('Clearing All Fields...');
-
-      $scope.name = '';
-      $scope.email = '';
-      $scope.company = '';
-      $scope.mobile_phone = '';
-      $scope.home_phone = '';
-      $scope.work_phone = '';
-      $scope.street_address = '';
-      $scope.city = '';
-      $scope.state = '';
-      $scope.zipcode = '';
-    }
+.controller('ContactsCtrl', ['$scope', 'contactsService',
+  function ($scope, contactsService) {
 
     //GET CONTACTS
-    $scope.contacts = $firebaseArray(fbRef);
-    console.log($scope.contacts);
+    $scope.contacts = contactsService.getContacts();
+    var ref = contactsService.ref;
+    console.log($scope.contacts, ref);
+
+
+    $scope.hide = function () {
+      $scope.addFormShow = false;
+    };
+
+    $scope.clearContact = function () {
+      $scope.newContact = {
+        name: null,
+        email: null,
+        company: null,
+        phone: [{
+          mobile: null,
+          home: null,
+          work: null
+        }],
+        address: [{
+          street_address: null,
+          city: null,
+          state: null,
+          zipcode: null
+        }]
+      };
+      console.log($scope.newContact);
+    };
+
+    $scope.addContact = function () {
+      contactsService.addContact(angular.copy($scope.newContact));
+      $scope.clearContact();
+      $scope.hide();
+      $scope.msg = 'Contact Added';
+    };
+
+    $scope.setContact = function (id) {
+      contactsService.setContact(id);
+    };
+
+    $scope.deleteContact = function (id) {
+      contactsService.removeContact(id);
+    };
 
     //SHOW & HIDE ADDFORM
     $scope.showAddForm = function () {
       $scope.addFormShow = true;
     };
-    $scope.hide = function () {
-      $scope.addFormShow = false;
-    };
-    //SUBMIT ADD FORM
-    $scope.addFormSubmit = function () {
 
-      //assign values
-      var name = $scope.name || null;
-      var email = $scope.email || null;
-      var company = $scope.company || null;
-      var mobile_phone = $scope.mobile_phone || null;
-      var home_phone = $scope.home_phone || null;
-      var work_phone = $scope.work_phone || null;
-      var street_address = $scope.street_address || null;
-      var city = $scope.city || null;
-      var state = $scope.state || null;
-      var zipcode = $scope.zipcode || null;
-
-      $scope.contacts.$add({
-        name: name,
-        email: email,
-        company: company,
-        phone: [{
-          mobile: mobile_phone,
-          home: home_phone,
-          work: work_phone
-        }],
-        address: [{
-          street_address: street_address,
-          city: city,
-          state: state,
-          zipcode: zipcode
-        }]
-      })
-        .then(function (fbRef) {
-          var id = fbRef.key();
-          console.log('Added Ccontact with ID: ' + id);
-
-          // Clear Form
-          clearFields();
-
-          // Hide Form
-          $scope.addFormShow = false;
-
-          // Send Message
-          $scope.msg = 'Contact Added';
-        });
-
-    };
-    $scope.shareContact = function (c) {
-      shareContact.passContact(c);
-    };
   }
 ])
 
-.controller('ContactCtrl', ['$scope', 'shareContact',
-  function ($scope, shareContact) {
-    $scope.contact = shareContact.contact;
+.controller('ContactCtrl', ['$scope', 'contactsService',
+  function ($scope, contactsService) {
+    $scope.contact = contactsService.contact;
+
+
     console.log($scope.contact);
-  $scope.clearContact = function () {
-      shareContact.clearContact();
+  }
+])
+
+.controller('ContactEditCtrl', ['$scope', '$location', 'contactsService',
+  function ($scope, $location, contactsService) {
+    $scope.contact = contactsService.contact;
+
+    $scope.undoContact = function () {
+      $scope.contact = contactsService.contact;
+    }
+    console.log($scope.contact);
+
+    $scope.updateContact = function (contact) {
+      contactsService.updateContact(contact);
+      $location.path('contacts');
     };
+
+    // $scope.clearContact = function () {
+    //   shareContact.clearContact();
+    // };
   }
 ]);

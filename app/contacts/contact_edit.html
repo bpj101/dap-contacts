@@ -1,0 +1,72 @@
+  <!-- Edit Contact-->
+  <form ng-submit="updateContact(contact)">
+      
+      <!-- Add Form -->
+      <div class="row">
+      <h3>Edit Contact</h3>
+        <div class="large-6 columns">
+          <label>Name:
+            <input type="text" ng-model="contact.name" placeholder="Contact Name" required />
+          </label>
+        </div>
+        <div class="large-6 columns">
+          <label>Email:
+            <input type="text" ng-model="contact.email" placeholder="Contact Email" required />
+          </label>
+        </div>
+     </div>
+     <div class="row">
+        <div class="large-6 columns">
+          <label>Company:
+            <input type="text" ng-model="contact.company" placeholder="Company Name" />
+          </label>
+        </div>
+        <div class="large-6 columns">
+          <label>Work Phone:
+            <input type="text" ng-model="contact.phone[0].work" placeholder="Work Phone" />
+          </label>
+        </div>
+     </div>
+     <div class="row">
+        <div class="large-6 columns">
+          <label>Mobile Phone:
+            <input type="text" ng-model="contact.phone[0].mobile" placeholder="Mobile Phone" />
+          </label>
+        </div>
+        <div class="large-6 columns">
+          <label>Home Phone:
+            <input type="text" ng-model="contact.phone[0].home" placeholder="Home Phone" />
+          </label>
+        </div>
+     </div>
+     <div class="row">
+        <div class="large-6 columns">
+          <label>Street Address:
+            <input type="text" ng-model="contact.address[0].street_address" placeholder="Street Address" />
+          </label>
+        </div>
+        <div class="large-6 columns">
+          <label>City:
+            <input type="text" ng-model="contact.address[0].city" placeholder="City" />
+          </label>
+        </div>
+     </div>
+     <div class="row">
+        <div class="large-6 columns">
+          <label>State:
+            <input type="text" ng-model="contact.address[0].state" placeholder="State" />
+          </label>
+        </div>
+        <div class="large-6 columns">
+          <label>Zip Code:
+            <input type="text" ng-model="contact.address[0].zipcode" placeholder="Zip Code" />
+          </label>
+        </div>
+     </div>
+     <div class="row">
+        <div class="large-12 columns">
+            <input type="submit" value="Update" class="button small" />
+            <a href='#/contacts' ng-click="undoContact()" class="button small">Cancel</a>
+        </div>
+     </div>
+  </form>
