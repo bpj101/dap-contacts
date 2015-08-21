@@ -72,7 +72,7 @@
       </div>
     </form>
     
-    <h3>DAP Contacts</h3>
+    <h3>DAP Contacts ({{contacts.length}})</h3>
     <table>
       <thead>
         <tr>
@@ -89,7 +89,7 @@
           <td>{{c.email}}</td>
           <td>
             <a ng-href="#/contact/edit/{{$id}}" class="button tiny" ng-click="setContact(c.$id)">Edit</a>
-            <a class="button tiny alert" ng-click="deleteContact(c.$id)">Delete</a>
+            <a class="button tiny alert" ng-click="deleteContact(c)">Delete</a>
           </td>
         </tr>
       </tbody>

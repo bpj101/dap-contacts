@@ -36,11 +36,6 @@ angular.module('dapContacts.contacts', ['ngRoute', 'firebase'])
       var setContact;
 
       this.contact = contacts.$getRecord(id);
-      // setContact = $filter('filter')(contacts, {
-      //   $id: id
-      // });
-      // this.contact = setContact[0];
-      console.log(this.contact);
     };
 
     var addContact = function (contact) {
@@ -59,8 +54,8 @@ angular.module('dapContacts.contacts', ['ngRoute', 'firebase'])
         });
     };
 
-    var removeContact = function (id) {
-      contacts.$remove(id);
+    var removeContact = function (contact) {
+      contacts.$remove(contact);
     };
     return {
       ref: ref,
@@ -82,7 +77,6 @@ angular.module('dapContacts.contacts', ['ngRoute', 'firebase'])
     $scope.contacts = contactsService.getContacts();
     var ref = contactsService.ref;
     console.log($scope.contacts, ref);
-
 
     $scope.hide = function () {
       $scope.addFormShow = false;
@@ -119,8 +113,8 @@ angular.module('dapContacts.contacts', ['ngRoute', 'firebase'])
       contactsService.setContact(id);
     };
 
-    $scope.deleteContact = function (id) {
-      contactsService.removeContact(id);
+    $scope.deleteContact = function (contact) {
+      contactsService.removeContact(contact);
     };
 
     //SHOW & HIDE ADDFORM
